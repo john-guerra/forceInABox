@@ -13,16 +13,16 @@ d3.layout.forceInABox = function () {
         treeMapNodes = [],
         groupBy = "cluster",
         enableGrouping = true,
-        gravityToFoci = 0.2,
-        gravityOverall = 0.01;
+        gravityToFoci = 0.1,
+        gravityOverall = 0.01,
+        linkStrengthInterCluster = 0.05;
 
-    force.gravity(gravityOverall);
 
-    force.gravity = function(x) {
-        if (!arguments.length) return oldGravity;
-        oldGravity = +x;
-        return force;
-    };
+    // force.gravity = function(x) {
+    //     if (!arguments.length) return oldGravity;
+    //     oldGravity = +x;
+    //     return force;
+    // };
 
     force.groupBy = function (x) {
         if (!arguments.length) return groupBy;
@@ -30,14 +30,18 @@ d3.layout.forceInABox = function () {
         return force;
     };
 
-    force.enableGrouping = function (x) {
-        if (!arguments.length) return enableGrouping;
-        enableGrouping = x;
+    var update = function () {
         if (enableGrouping) {
             force.gravity(gravityOverall);
         } else {
             force.gravity(oldGravity);
         }
+    };
+
+    force.enableGrouping = function (x) {
+        if (!arguments.length) return enableGrouping;
+        enableGrouping = x;
+        update();
         return force;
     };
 
@@ -47,8 +51,16 @@ d3.layout.forceInABox = function () {
         return force;
     };
 
-    force.linkStrengthInterCluster = function () {
-        return 0;
+    force.gravityOverall = function (x) {
+        if (!arguments.length) return gravityOverall;
+        gravityOverall = x;
+        return force;
+    };
+
+    force.linkStrengthInterCluster = function (x) {
+        if (!arguments.length) return linkStrengthInterCluster;
+        linkStrengthInterCluster = x;
+        return force;
     };
 
 
@@ -60,7 +72,11 @@ d3.layout.forceInABox = function () {
                 return oldLinkStrength;
             }
         } else {
-            return force.linkStrengthInterCluster(e);
+            if (typeof(linkStrengthInterCluster)==="function") {
+                return linkStrengthInterCluster(e);
+            } else {
+                return linkStrengthInterCluster;
+            }
         }
     });
 
@@ -162,6 +178,7 @@ d3.layout.forceInABox = function () {
     };
 
     force.start = function () {
+        update();
         oldStart();
         if (enableGrouping) {
             force.recompute();

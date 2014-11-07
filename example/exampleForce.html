@@ -22,7 +22,7 @@
 <input id="checkGroupInABox" type="checkbox">Group in a Box</input>
 <input id="checkShowTreemap" type="checkbox">Show Treemap</input>
 <script src="http://d3js.org/d3.v3.js"></script>
-<script type="text/javascript" src="../forceInABox.js">   </script>
+<script type="text/javascript" src="../forceInABox.js"></script>
 <script>
 
 var useGroupInABox = true,
@@ -31,15 +31,17 @@ var useGroupInABox = true,
 d3.select("#checkGroupInABox").property("checked", useGroupInABox);
 d3.select("#checkShowTreemap").property("checked", drawTreeMap);
 
-var width = 960,
-    height = 500;
+var width = 900,
+    height = 450;
 
 var color = d3.scale.category20();
 
 var force = d3.layout.forceInABox()
-    .charge(-60)
-    .linkDistance(30)
-    // .linkStrength(0.1)
+    .charge(-120)
+    .linkDistance(50)
+    .linkStrengthInterCluster(0.01)
+    .gravityToFoci(0.2)
+    .gravityOverall(0.05)
     .size([width, height])
     .groupBy("group");
 
@@ -52,7 +54,6 @@ d3.json("miserables.json", function(error, graph) {
   force
       .nodes(graph.nodes)
       .links(graph.links)
-      // .links([])
       .start();
 
   var link = svg.selectAll(".link")
@@ -100,7 +101,6 @@ d3.json("miserables.json", function(error, graph) {
     } else {
       force.deleteTreemap(svg);
     }
-
   });
 
 });
