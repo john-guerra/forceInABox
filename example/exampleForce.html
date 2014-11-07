@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.node {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+.link {
+  stroke: #999;
+  stroke-opacity: .6;
+}
+
+.cell {
+  fill: none;
+  stroke: grey;
+}
+
+</style>
+<body>
+<input id="checkGroupInABox" type="checkbox">Group in a Box</input>
+<input id="checkShowTreemap" type="checkbox">Show Treemap</input>
+<script src="http://d3js.org/d3.v3.js"></script>
+<script type="text/javascript" src="../forceInABox.js">   </script>
+<script>
+
+var useGroupInABox = true,
+  drawTreeMap = false;
+
+d3.select("#checkGroupInABox").property("checked", useGroupInABox);
+d3.select("#checkShowTreemap").property("checked", drawTreeMap);
+
+var width = 960,
+    height = 500;
+
+var color = d3.scale.category20();
+
+var force = d3.layout.forceInABox()
+    .charge(-60)
+    .linkDistance(30)
+    // .linkStrength(0.1)
+    .size([width, height])
+    .groupBy("group");
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+d3.json("miserables.json", function(error, graph) {
+
+  force
+      .nodes(graph.nodes)
+      .links(graph.links)
+      // .links([])
+      .start();
+
+  var link = svg.selectAll(".link")
+      .data(graph.links)
+    .enter().append("line")
+      .attr("class", "link")
+      .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+  var node = svg.selectAll(".node")
+      .data(graph.nodes)
+    .enter().append("circle")
+      .attr("class", "node")
+      .attr("r", 5)
+      .call(force.drag)
+      .style("fill", function(d) { return color(d.group); });
+
+  node.append("title")
+      .text(function(d) { return d.name; });
+
+  force.on("tick", function(e) {
+    if (useGroupInABox) {
+      force.onTick(e);
+    }
+
+    link.attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+
+    node.attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; });
+  });
+
+  d3.select("#checkGroupInABox").on("change", function () {
+    force.stop();
+    useGroupInABox = d3.select("#checkGroupInABox").property("checked");
+    force.enableGrouping(useGroupInABox);
+    force.start();
+  });
+
+  d3.select("#checkShowTreemap").on("change", function () {
+    drawTreeMap = d3.select("#checkShowTreemap").property("checked");
+    if (drawTreeMap) {
+      force.drawTreemap(svg);
+    } else {
+      force.deleteTreemap(svg);
+    }
+
+  });
+
+});
+
+</script>
