@@ -21,6 +21,7 @@
 <body>
 <input id="checkGroupInABox" type="checkbox">Group in a Box</input>
 <input id="checkShowTreemap" type="checkbox">Show Treemap</input>
+<div id="chart"></div>
 <script src="http://d3js.org/d3.v3.js"></script>
 <script type="text/javascript" src="../forceInABox.js"></script>
 <script>
@@ -32,7 +33,7 @@ d3.select("#checkGroupInABox").property("checked", useGroupInABox);
 d3.select("#checkShowTreemap").property("checked", drawTreeMap);
 
 var width = 900,
-    height = 450;
+    height = 600;
 
 var color = d3.scale.category20();
 

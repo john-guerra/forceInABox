@@ -27,7 +27,7 @@ d3.layout.forceInABox = function () {
     force.groupBy = function (x) {
         if (!arguments.length) return groupBy;
         if (typeof x === "string") {
-            x = function (d) {return d[x]; };
+            groupBy = function (d) {return d[x]; };
             return force;
         }
         groupBy = x;
