@@ -11,7 +11,7 @@ d3.layout.forceInABox = function () {
         oldLinkStrength = force.linkStrength(),
         oldGravity = force.gravity(),
         treeMapNodes = [],
-        groupBy = "cluster",
+        groupBy = function (d) {return d["cluster"]},
         enableGrouping = true,
         gravityToFoci = 0.1,
         gravityOverall = 0.01,
@@ -26,6 +26,10 @@ d3.layout.forceInABox = function () {
 
     force.groupBy = function (x) {
         if (!arguments.length) return groupBy;
+        if (typeof x === "string") {
+            x = function (d) {return d[x]; };
+            return force;
+        }
         groupBy = x;
         return force;
     };
@@ -65,7 +69,7 @@ d3.layout.forceInABox = function () {
 
 
     force.linkStrength(function (e) {
-        if (!enableGrouping || e.source[groupBy] === e.target[groupBy]) {
+        if (!enableGrouping || groupBy(e.source) === groupBy(e.target)) {
             if (typeof(oldLinkStrength)==="function") {
                 return oldLinkStrength(e);
             } else {
@@ -85,14 +89,14 @@ d3.layout.forceInABox = function () {
         var clustersCounts = d3.map();
 
         nodes.forEach(function (d) {
-            if (!clustersCounts.has(d[groupBy])) {
-                clustersCounts.set(d[groupBy], 0);
+            if (!clustersCounts.has(groupBy(d))) {
+                clustersCounts.set(groupBy(d), 0);
             }
         });
 
         nodes.forEach(function (d) {
             // if (!d.show) { return; }
-            clustersCounts.set(d[groupBy], clustersCounts.get(d[groupBy]) + 1);
+            clustersCounts.set(groupBy(d), clustersCounts.get(groupBy(d)) + 1);
         });
 
         return clustersCounts;
@@ -170,9 +174,9 @@ d3.layout.forceInABox = function () {
         var k;
         k = force.gravityToFoci() * e.alpha;
         force.nodes().forEach(function (o) {
-            if (!foci.hasOwnProperty(o[groupBy])) { return; }
-            o.y += (foci[o[groupBy]].y - o.y) * k;
-            o.x += (foci[o[groupBy]].x - o.x) * k;
+            if (!foci.hasOwnProperty(groupBy(o))) { return; }
+            o.y += (foci[groupBy(o)].y - o.y) * k;
+            o.x += (foci[groupBy(o)].x - o.x) * k;
         });
         return force;
     };
