@@ -18,12 +18,6 @@ d3.layout.forceInABox = function () {
         linkStrengthInterCluster = 0.05;
 
 
-    // force.gravity = function(x) {
-    //     if (!arguments.length) return oldGravity;
-    //     oldGravity = +x;
-    //     return force;
-    // };
-
     force.groupBy = function (x) {
         if (!arguments.length) return groupBy;
         if (typeof x === "string") {
