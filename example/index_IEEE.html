@@ -20,7 +20,7 @@
 </style>
 <body>
 <input id="checkGroupInABox" type="checkbox">Group in a Box</input>
-<input id="checkShowTreemap" type="checkbox">Show Treemap</input>
+<input id="checkShowTreemap" type="checkbox">Show Layout</input>
   <select id="selectTemplate" type="select">
     <option value="treemap">Treemap</option>
     <option value="force">Force</option>
@@ -72,9 +72,9 @@ function callback(error, nodes, links, groups) {
   links.forEach(function (d) {
     d.source = dNodes.get(d["Vertex 1"]);
     d.target = dNodes.get(d["Vertex 2"]);
-    if (nodes[d.source].group===nodes[d.target].group) {
+    // if (nodes[d.source].group===nodes[d.target].group) {
       filteredLinks.push(d);
-    }
+    // }
 
   });
 
