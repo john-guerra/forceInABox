@@ -17,7 +17,7 @@ d3.layout.forceInABox = function () {
         template = "treemap",
         enableGrouping = true,
         gravityToFoci = 0.1,
-        gravityOverall = 0.01,
+        gravityOverall = 0.1,
         linkStrengthInterCluster = 0.05,
         showingTemplate = false;
 
@@ -232,8 +232,11 @@ d3.layout.forceInABox = function () {
 
         templateForce = d3.layout.force()
             .size(force.size())
-            .gravity(0.5)
-            .charge(function (d) { return -100 * d.size; });
+            .gravity(0.3)
+            .linkDistance(function (e) {
+                return Math.max(e.source.size, e.target.size)*3;
+            })
+            .charge(function (d) { return -50 * d.size; });
 
         net = getGroupsGraph();
         templateForce.nodes(net.nodes);
@@ -246,13 +249,27 @@ d3.layout.forceInABox = function () {
         getFocisFromTemplate();
     }
 
+    // Puts the nodes in positions close to the foci to facilitate convergence
+    function setInitialPositions() {
+        if (!enableGrouping)
+            return;
+
+        var forceSize = force.size();
+        force.nodes().forEach(function (o) {
+            if (!foci.hasOwnProperty(groupBy(o))) { return; }
+            o.y = o.py = foci[groupBy(o)].y + (Math.random() * forceSize[1]/10) - forceSize[1]/5;
+            o.x = o.px = foci[groupBy(o)].x + (Math.random() * forceSize[0]/10) - forceSize[1]/5;
+        });
+    }
+
     force.recompute = function () {
+
         if (template==="treemap") {
             recomputeWithTreemap();
         } else {
             recomputeWithForce();
         }
-        // Draw the treemap
+        setInitialPositions();
         return force;
     };
 
