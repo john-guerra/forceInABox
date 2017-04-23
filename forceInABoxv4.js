@@ -13,9 +13,11 @@ function forceInAGroup(alpha) {
 
   var id = index,
       nodes,
+      links, //needed for the force version
       count,
       tree,
-      size,
+      size = [100,100],
+      nodeSize = 5, // The expected node size used for computing the cluster node
       foci = {},
       // oldStart = force.start,
       // oldLinkStrength = force.linkStrength(),
@@ -128,8 +130,8 @@ function forceInAGroup(alpha) {
 
   //Returns the metagraph of the clusters
   function getGroupsGraph() {
-    var nodes = [],
-      links = [],
+    var gnodes = [],
+      glinks = [],
       // edges = [],
       dNodes = d3.map(),
       // totalSize = 0,
@@ -138,21 +140,21 @@ function forceInAGroup(alpha) {
       clustersCounts,
       clustersLinks;
 
-    clustersCounts = computeClustersNodeCounts(force.nodes());
-    clustersLinks = computeClustersLinkCounts(force.links());
+    clustersCounts = computeClustersNodeCounts(nodes);
+    clustersLinks = computeClustersLinkCounts(links);
 
     //map.keys() is really slow, it's crucial to have it outside the loop
     clustersList = clustersCounts.keys();
     for (i = 0; i< clustersList.length ; i+=1) {
       c = clustersList[i];
       size = clustersCounts.get(c);
-      nodes.push({id : c, size :size });
+      gnodes.push({id : c, size :size });
       dNodes.set(c, i);
       // totalSize += size;
     }
 
     clustersLinks.forEach(function (l) {
-      links.push({
+      glinks.push({
         "source":dNodes.get(l.source),
         "target":dNodes.get(l.target),
         "count":l.count
@@ -160,7 +162,7 @@ function forceInAGroup(alpha) {
     });
 
 
-    return {nodes: nodes, links: links};
+    return {nodes: gnodes, links: glinks};
   }
 
 
@@ -195,7 +197,7 @@ function forceInAGroup(alpha) {
           y : (d.y0 + (d.y1-d.y0) / 2)
         };
       } else {
-        foci[d.data.id] = {x : d.x , y : d.y };
+        foci[d.id] = {x : d.x , y : d.y };
       }
     });
   }
@@ -223,8 +225,9 @@ function forceInAGroup(alpha) {
     net = getGroupsGraph();
     templateForce = d3.forceSimulation(net.nodes)
       .force("x", d3.forceX(size[0]/2).strength(0.5))
-      .force("y", d3.forceX(size[1]/2).strength(0.5))
-      .force("charge", d3.forceManyBody().strength(function (d) { return -100 * d.size; }))
+      .force("y", d3.forceY(size[1]/2).strength(0.5))
+      .force("collide", d3.forceCollide(function (d) { return d.size*nodeSize; }))
+      .force("charge", d3.forceManyBody().strength(function (d) { return -200 * d.size; }))
       .force("links", d3.forceLink(net.links))
 
     templateNodes = templateForce.nodes();
@@ -232,18 +235,9 @@ function forceInAGroup(alpha) {
     getFocisFromTemplate();
   }
 
-  force.recompute = function () {
-    if (template==="treemap") {
-      initializeWithTreemap();
-    } else {
-      initializeWithForce();
-    }
-    // Draw the treemap
-    return force;
-  };
 
   function drawTreemap(container) {
-    container.selectAll("cell").remove();
+    container.selectAll(".cell").remove();
     container.selectAll("cell")
       .data(templateNodes)
       .enter().append("svg:rect")
@@ -256,7 +250,7 @@ function forceInAGroup(alpha) {
   }
 
   function drawGraph(container) {
-    container.selectAll("cell").remove();
+    container.selectAll(".cell").remove();
     templateNodesSel = container.selectAll("cell")
       .data(templateNodes);
     templateNodesSel
@@ -264,12 +258,12 @@ function forceInAGroup(alpha) {
       .attr("class", "cell")
       .attr("cx", function (d) { return d.x; })
       .attr("cy", function (d) { return d.y; })
-      .attr("r", function (d) { return d.size; });
+      .attr("r", function (d) { return d.size*nodeSize; });
 
   }
 
   force.drawTemplate = function (container) {
-    showingTemplate = true;
+    // showingTemplate = true;
     if (template === "treemap") {
       drawTreemap(container);
     } else {
@@ -281,9 +275,9 @@ function forceInAGroup(alpha) {
   //Backwards compatibility
   force.drawTreemap = force.drawTemplate;
 
-  force.deleteTreemap = function (container) {
-    showingTemplate = false;
-    container.selectAll("rect.cell").remove();
+  force.deleteTemplate = function (container) {
+    // showingTemplate = false;
+    container.selectAll(".cell").remove();
 
     return force;
   };
@@ -292,6 +286,7 @@ function forceInAGroup(alpha) {
   force.template = function (x) {
     if (!arguments.length) return template;
     template = x;
+    initialize();
     return force;
   };
 
@@ -362,6 +357,13 @@ function forceInAGroup(alpha) {
     return arguments.length ? (nodes = _, force) : nodes;
   };
 
+  force.links = function(_) {
+    return arguments.length ? (links = _, force) : links;
+  };
+
+  force.nodeSize = function(_) {
+    return arguments.length ? (nodeSize = _, force) : nodeSize;
+  };
 
   // force.strength = function(_) {
   //   return arguments.length ? (strength = typeof _ === "function" ? _ : constant(+_), initializeStrength(), force) : strength;

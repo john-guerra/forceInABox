@@ -27,6 +27,7 @@
   </select>
 <div id="chart"></div>
 <script src="//d3js.org/d3.v4.js"></script>
+<!-- <script src="d3.v4.min.js"></script> -->
 <script type="text/javascript" src="../forceInABoxv4.js"></script>
 <script>
 /* global d3, forceInAGroup */
@@ -59,6 +60,7 @@ d3.json("miserables.json", function(error, graph) {
       .nodes(graph.nodes)
       .force("group", forceInAGroup()
           .nodes(graph.nodes)
+          .links(graph.links)
           .strength(0.1)
           .gravityOverall(0.05)
           .template(template)
@@ -117,15 +119,15 @@ d3.json("miserables.json", function(error, graph) {
     template = d3.select("#selectTemplate").property("value");
     force.stop();
     force.force("group").template(template);
-    force.alphaTarget(0.1).restart();
+    force.alphaTarget(0.5).restart();
   });
 
   d3.select("#checkShowTreemap").on("change", function () {
     drawTreeMap = d3.select("#checkShowTreemap").property("checked");
     if (drawTreeMap) {
-      force.force("group").drawTreemap(svg);
+      force.force("group").drawTemplate(svg);
     } else {
-      force.force("group").deleteTreemap(svg);
+      force.force("group").deleteTemplate(svg);
     }
   });
 
