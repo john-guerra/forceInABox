@@ -26,9 +26,10 @@
     <option value="force">Force</option>
   </select>
 <div id="chart"></div>
-<script src="http://d3js.org/d3.v3.js"></script>
-<script type="text/javascript" src="../forceInABox.js"></script>
+<script src="//d3js.org/d3.v4.js"></script>
+<script type="text/javascript" src="../forceInABoxv4.js"></script>
 <script>
+/* global d3, forceInAGroup */
 
 var useGroupInABox = true,
   drawTreeMap = false,
@@ -41,17 +42,12 @@ d3.select("#selectTemplate").property("value", template);
 var width = 900,
     height = 600;
 
-var color = d3.scale.category20();
+var color = d3.scaleOrdinal(d3.schemeCategory20);
 
-var force = d3.layout.forceInABox()
-    .charge(-120)
-    .linkDistance(50)
-    .linkStrengthInterCluster(0.01)
-    .gravityToFoci(0.2)
-    .gravityOverall(0.05)
-    .size([width, height])
-    .template(template)
-    .groupBy("group");
+var force = d3.forceSimulation()
+    .force("charge", d3.forceManyBody())
+    .force("x", d3.forceX(width/2).strength(0.05))
+    .force("y", d3.forceY(height/2).strength(0.05));
 
 var svg = d3.select("body").append("svg")
     .attr("width", width)
@@ -61,8 +57,18 @@ d3.json("miserables.json", function(error, graph) {
 
   force
       .nodes(graph.nodes)
-      .links(graph.links)
-      .start();
+      .force("group", forceInAGroup()
+          .nodes(graph.nodes)
+          .strength(0.1)
+          .gravityOverall(0.05)
+          .template(template)
+          .groupBy("group")
+          .size([width, height])
+        )
+
+      .force("link", d3.forceLink(graph.links).distance(50).strength(
+        function (l) { return l.source.group!==l.target.group ? 0 : 0.1;
+      }))
 
   var link = svg.selectAll(".link")
       .data(graph.links)
@@ -75,16 +81,16 @@ d3.json("miserables.json", function(error, graph) {
     .enter().append("circle")
       .attr("class", "node")
       .attr("r", 5)
-      .call(force.drag)
+      // .call(force.drag)
       .style("fill", function(d) { return color(d.group); });
 
   node.append("title")
       .text(function(d) { return d.name; });
 
   force.on("tick", function(e) {
-    if (useGroupInABox) {
-      force.onTick(e);
-    }
+    // if (useGroupInABox) {
+    //   force.onTick(e);
+    // }
 
     link.attr("x1", function(d) { return d.source.x; })
         .attr("y1", function(d) { return d.source.y; })
@@ -98,23 +104,28 @@ d3.json("miserables.json", function(error, graph) {
   d3.select("#checkGroupInABox").on("change", function () {
     force.stop();
     useGroupInABox = d3.select("#checkGroupInABox").property("checked");
-    force.enableGrouping(useGroupInABox);
-    force.start();
+    force
+        .force("link", d3.forceLink(graph.links).distance(50).strength(
+        function (l) { return !useGroupInABox? 0.7 :
+            l.source.group!==l.target.group ? 0 : 0.1;
+      })).force("group").enableGrouping(useGroupInABox)
+
+    force.alphaTarget(0.5).restart();
   });
 
   d3.select("#selectTemplate").on("change", function () {
     template = d3.select("#selectTemplate").property("value");
     force.stop();
-    force.template(template);
-    force.start();
+    force.force("group").template(template);
+    force.alphaTarget(0.1).restart();
   });
 
   d3.select("#checkShowTreemap").on("change", function () {
     drawTreeMap = d3.select("#checkShowTreemap").property("checked");
     if (drawTreeMap) {
-      force.drawTreemap(svg);
+      force.force("group").drawTreemap(svg);
     } else {
-      force.deleteTreemap(svg);
+      force.force("group").deleteTreemap(svg);
     }
   });
 
