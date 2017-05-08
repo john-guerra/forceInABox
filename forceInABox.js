@@ -397,10 +397,6 @@ function forceInABox(alpha) {
   force.forceCharge = function(_) {
     return arguments.length ? (forceCharge = _, force) : forceCharge;
   };
-  // force.strength = function(_) {
-  //   return arguments.length ? (strength = typeof _ === "function" ? _ : constant(+_), initializeStrength(), force) : strength;
-  // };
-
 
   return force;
 }
