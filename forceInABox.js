@@ -11,6 +11,7 @@ function forceInABox(alpha) {
       tree,
       size = [100,100],
       nodeSize = 5, // The expected node size used for computing the cluster node
+      forceCharge = -200,
       foci = {},
       // oldStart = force.start,
       linkStrengthIntraCluster = 0.1,
@@ -246,7 +247,7 @@ function forceInABox(alpha) {
       .force("x", d3.forceX(size[0]/2).strength(0.5))
       .force("y", d3.forceY(size[1]/2).strength(0.5))
       .force("collide", d3.forceCollide(function (d) { return d.size*nodeSize; }))
-      .force("charge", d3.forceManyBody().strength(function (d) { return -200 * d.size; }))
+      .force("charge", d3.forceManyBody().strength(function (d) { return forceCharge * d.size; }))
       .force("links", d3.forceLink(net.links))
 
     templateNodes = templateForce.nodes();
@@ -393,6 +394,9 @@ function forceInABox(alpha) {
     return arguments.length ? (nodeSize = _, force) : nodeSize;
   };
 
+  force.forceCharge = function(_) {
+    return arguments.length ? (forceCharge = _, force) : forceCharge;
+  };
   // force.strength = function(_) {
   //   return arguments.length ? (strength = typeof _ === "function" ? _ : constant(+_), initializeStrength(), force) : strength;
   // };
