@@ -18,6 +18,7 @@ function forceInABox(alpha) {
       linkStrengthInterCluster = 0.01,
       // oldGravity = force.gravity(),
       templateNodes = [],
+      offset = [0,0],
       templateForce,
       templateNodesSel,
       groupBy = function (d) { return d.cluster; },
@@ -187,17 +188,17 @@ function forceInABox(alpha) {
     templateNodes.forEach(function (d) {
       if (template==="treemap") {
         foci[d.data.id] = {
-          x : (d.x0 + (d.x1-d.x0) / 2),
-          y : (d.y0 + (d.y1-d.y0) / 2)
+          x : (d.x0 + (d.x1-d.x0) / 2) - offset[0],
+          y : (d.y0 + (d.y1-d.y0) / 2) - offset[1]
         };
       } else {
-        foci[d.id] = {x : d.x , y : d.y };
+        foci[d.id] = {x : d.x - offset[0] , y : d.y - offset[1]};
       }
     });
   }
   function initializeWithTreemap() {
     var treemap = d3.treemap()
-      .size(force.size())
+      .size(force.size());
 
     tree = d3.hierarchy(getGroupsTree())
       // .sort(function (p, q) { return d3.ascending(p.size, q.size); })
@@ -396,6 +397,10 @@ function forceInABox(alpha) {
 
   force.forceCharge = function(_) {
     return arguments.length ? (forceCharge = _, force) : forceCharge;
+  };
+
+  force.offset = function(_) {
+    return arguments.length ? (offset = _, force) : offset;
   };
 
   return force;
