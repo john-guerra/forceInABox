@@ -1,9 +1,11 @@
 forceInABox.js
 ==============
 
+![forceInABox demo gif](https://cdn.rawgit.com/john-guerra/forceInABox/6ffb1ab6/example/forceInABoxv4.gif)
+
 Updated for d3.v4
 
-A d3.js v4 force that implements the Group-in-a-box layout algorithm to distribute nodes in a network according to their clusters. The algorithm uses a treemap or a force diagram to compute focis that are later used to distribute each cluster into it's own box.
+A d3.js v4 force that implements the [Group-in-a-box](http://hcil2.cs.umd.edu/trs/2011-24/2011-24.pdf) layout algorithm to distribute nodes in a network according to their clusters. The algorithm uses a treemap or a force diagram to compute focis that are later used to distribute each cluster into it's own box.
 
 To use it just add the forceInABox as another force in your simulation and make sure your other forces don't overpower it
 
