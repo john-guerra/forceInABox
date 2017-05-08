@@ -26,11 +26,10 @@
     <option value="force">Force</option>
   </select>
 <div id="chart"></div>
-<script src="//d3js.org/d3.v4.js"></script>
-<!-- <script src="d3.v4.min.js"></script> -->
-<script type="text/javascript" src="../forceInABoxv4.js"></script>
+<script src="d3.v4.min.js"></script>
+<script type="text/javascript" src="../forceInABox.js"></script>
 <script>
-/* global d3, forceInAGroup */
+/* global d3, forceInABox */
 
 var useGroupInABox = true,
   drawTreeMap = false,
@@ -58,7 +57,7 @@ d3.json("miserables.json", function(error, graph) {
 
   force
       .nodes(graph.nodes)
-      .force("group", forceInAGroup()
+      .force("group", forceInABox()
           .nodes(graph.nodes)
           .links(graph.links)
           .strength(0.1)

@@ -1,25 +1,37 @@
 forceInABox.js
 ==============
 
-A d3.js force extension that implements the Group-in-a-box layout algorithm to distribute nodes in a network according to their clusters. The algorithm uses a treemap to compute focis that are later used to distribute each cluster into it's own box.
+Updated for d3.v4
 
-To use it you need to include the library, and use the forceInABox instead of the normal d3.layout.force
+A d3.js v4 force that implements the Group-in-a-box layout algorithm to distribute nodes in a network according to their clusters. The algorithm uses a treemap or a force diagram to compute focis that are later used to distribute each cluster into it's own box.
+
+To use it just add the forceInABox as another force in your simulation and make sure your other forces don't overpower it
 
 ```html
+	<!-- Include d3.v4 or forceSimulation -->
 	<script type="text/javascript" src="forceInABox.js">   </script>
 ```
 ```js
-	//create the force and specify the grouping parameter
-	var force = d3.layout.forceInABox()
-					.groupBy("group");
+		// Create the simulation with a small forceX and Y towards the center
+		var force = d3.forceSimulation()
+	    .force("charge", d3.forceManyBody())
+	    .force("x", d3.forceX(width/2).strength(0.05))
+	    .force("y", d3.forceY(height/2).strength(0.05));
 
-	//Add nodes and edges
-	force.nodes(nodes)
-		.edges(edges)
-		.start();
-
-	//Add the onTick method to the tick event
-	force.on("tick", function(e) {
-      force.onTick(e);
-    };
+ 		simulation
+      .nodes(graph.nodes)
+      // Add the forceInABox force
+      .force("group", forceInABox()
+          .nodes(graph.nodes)
+          .links(graph.links)
+          .strength(0.1)
+          .gravityOverall(0.05)
+          .template(template)
+          .groupBy("group")
+          .size([width, height])
+        )
+			// Add a link force that only pulls together nodes that are in the same group
+      .force("link", d3.forceLink(graph.links).distance(50).strength(
+        function (l) { return l.source.group!==l.target.group ? 0 : 0.1;
+      }))
 ```
