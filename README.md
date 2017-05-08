@@ -24,7 +24,6 @@ var groupingForce = forceInABox()
 	  .template(template) // Either treemap or force
 	  .groupBy("group") // Node attribute to group
 	  .links(graph.links) // The graph links. Must be called after setting the grouping attribute
-	  .enableGrouping(useGroupInABox)
 	  .size([width, height]) // Size of the chart
 
 // Add your forceInABox to the simulation
