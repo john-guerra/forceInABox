@@ -13,25 +13,27 @@ To use it just add the forceInABox as another force in your simulation and make 
 ```
 ```js
 		// Create the simulation with a small forceX and Y towards the center
-		var force = d3.forceSimulation()
+		var simulation = d3.forceSimulation()
 	    .force("charge", d3.forceManyBody())
 	    .force("x", d3.forceX(width/2).strength(0.05))
 	    .force("y", d3.forceY(height/2).strength(0.05));
 
- 		simulation
-      .nodes(graph.nodes)
-      // Add the forceInABox force
-      .force("group", forceInABox()
-          .nodes(graph.nodes)
-          .links(graph.links)
-          .strength(0.1)
-          .gravityOverall(0.05)
-          .template(template)
-          .groupBy("group")
-          .size([width, height])
-        )
-			// Add a link force that only pulls together nodes that are in the same group
-      .force("link", d3.forceLink(graph.links).distance(50).strength(
-        function (l) { return l.source.group!==l.target.group ? 0 : 0.1;
-      }))
+		// Instantiate the forceInABox force
+	  var groupingForce = forceInABox()
+      .strength(0.1) // Strength to foci
+      .template(template) // Either treemap or force
+      .groupBy("group") // Node attribute to group
+      .links(graph.links) // The graph links. Must be called after setting the grouping attribute
+      .enableGrouping(useGroupInABox)
+      .size([width, height]) // Size of the chart
+
+		// Add your forceInABox to the simulation
+	  simulation
+	      .nodes(graph.nodes)
+	      .force("group", groupingForce)
+	      .force("link", d3.forceLink(graph.links)
+	        .distance(50)
+	        .strength(groupingForce.getLinkStrength) // default link force will try to join nodes in the same group stronger than if they are in different groups
+	      );
+
 ```
