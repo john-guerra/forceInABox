@@ -8,13 +8,13 @@ function forceInABox(alpha) {
   var id = index,
       nodes,
       links, //needed for the force version
-      count,
       tree,
       size = [100,100],
       nodeSize = 5, // The expected node size used for computing the cluster node
       foci = {},
       // oldStart = force.start,
-      // oldLinkStrength = force.linkStrength(),
+      linkStrengthIntraCluster = 0.1,
+      linkStrengthInterCluster = 0.01,
       // oldGravity = force.gravity(),
       templateNodes = [],
       templateForce,
@@ -218,6 +218,8 @@ function forceInABox(alpha) {
     links.forEach(function (link) {
       var source, target;
       if (!nodes) return;
+      source = link.source;
+      target = link.target;
       if (typeof link.source !== "object") source = nodes[link.source];
       if (typeof link.target !== "object") target = nodes[link.target];
       if (source === undefined || target === undefined) {
@@ -332,22 +334,31 @@ function forceInABox(alpha) {
   };
 
 
+  force.getLinkStrength = function (e) {
+    if(enableGrouping)  {
+      if (groupBy(e.source) === groupBy(e.target)) {
+        if (typeof(linkStrengthIntraCluster)==="function") {
+          return linkStrengthIntraCluster(e);
+        } else {
+          return linkStrengthIntraCluster;
+        }
+      } else {
+        if (typeof(linkStrengthInterCluster)==="function") {
+          return linkStrengthInterCluster(e);
+        } else {
+          return linkStrengthInterCluster;
+        }
+      }
+    } else {
+      // Not grouping return the intracluster
+      if (typeof(linkStrengthIntraCluster)==="function") {
+          return linkStrengthIntraCluster(e);
+        } else {
+          return linkStrengthIntraCluster;
+        }
 
-  // force.linkStrength(function (e) {
-  //   if (!enableGrouping || groupBy(e.source) === groupBy(e.target)) {
-  //     if (typeof(oldLinkStrength)==="function") {
-  //       return oldLinkStrength(e);
-  //     } else {
-  //       return oldLinkStrength;
-  //     }
-  //   } else {
-  //     if (typeof(linkStrengthInterCluster)==="function") {
-  //       return linkStrengthInterCluster(e);
-  //     } else {
-  //       return linkStrengthInterCluster;
-  //     }
-  //   }
-  // });
+    }
+  };
 
 
   force.id = function(_) {
@@ -356,6 +367,14 @@ function forceInABox(alpha) {
 
   force.size = function(_) {
     return arguments.length ? (size = _, force) : size;
+  };
+
+  force.linkStrengthInterCluster = function(_) {
+    return arguments.length ? (linkStrengthInterCluster = _, force) : linkStrengthInterCluster;
+  };
+
+  force.linkStrengthIntraCluster = function(_) {
+    return arguments.length ? (linkStrengthIntraCluster = _, force) : linkStrengthIntraCluster;
   };
 
   force.nodes = function(_) {
