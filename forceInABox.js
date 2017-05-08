@@ -5,12 +5,6 @@ function forceInABox(alpha) {
     return d.index;
   }
 
-  function find(nodeById, nodeId) {
-    var node = nodeById.get(nodeId);
-    if (!node) throw new Error("missing: " + nodeId);
-    return node;
-  }
-
   var id = index,
       nodes,
       links, //needed for the force version
@@ -28,8 +22,7 @@ function forceInABox(alpha) {
       groupBy = function (d) { return d.cluster; },
       template = "treemap",
       enableGrouping = true,
-      strength = 0.1,
-      gravityOverall = 0.01;
+      strength = 0.1;
       // showingTemplate = false;
 
 
@@ -219,8 +212,32 @@ function forceInABox(alpha) {
     getFocisFromTemplate();
   }
 
+  function checkLinksAsObjects() {
+    // Check if links come in the format of indexes instead of objects
+    var linkCount = 0;
+    links.forEach(function (link) {
+      var source, target;
+      if (!nodes) return;
+      if (typeof link.source !== "object") source = nodes[link.source];
+      if (typeof link.target !== "object") target = nodes[link.target];
+      if (source === undefined || target === undefined) {
+        console.log(link);
+        throw Error("Error setting links, couldn't find nodes for a link (see it on the console)" );
+      }
+      link.source = source; link.target = target;
+      link.index = linkCount++;
+    });
+  }
   function initializeWithForce() {
     var net;
+
+    if (nodes && nodes.length>0) {
+      if (groupBy(nodes[0])===undefined) {
+        throw Error("Couldn't find the grouping attribute for the nodes. Make sure to set it up with forceInABox.groupBy('attr') before calling .links()");
+      }
+    }
+
+    checkLinksAsObjects();
 
     net = getGroupsGraph();
     templateForce = d3.forceSimulation(net.nodes)
@@ -300,13 +317,6 @@ function forceInABox(alpha) {
     return force;
   };
 
-  // var update = function () {
-  //   if (enableGrouping) {
-  //     force.gravity(gravityOverall);
-  //   } else {
-  //     force.gravity(oldGravity);
-  //   }
-  // };
 
   force.enableGrouping = function (x) {
     if (!arguments.length) return enableGrouping;
@@ -321,11 +331,6 @@ function forceInABox(alpha) {
     return force;
   };
 
-  force.gravityOverall = function (x) {
-    if (!arguments.length) return gravityOverall;
-    gravityOverall = x;
-    return force;
-  };
 
 
   // force.linkStrength(function (e) {
@@ -358,7 +363,11 @@ function forceInABox(alpha) {
   };
 
   force.links = function(_) {
-    return arguments.length ? (links = _, force) : links;
+    if (!arguments.length)
+      return links;
+    if (_ === null) links = [];
+    else links = _;
+    return force;
   };
 
   force.nodeSize = function(_) {

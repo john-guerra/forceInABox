@@ -26,14 +26,14 @@
     <option value="force">Force</option>
   </select>
 <div id="chart"></div>
-<script src="d3.v4.min.js"></script>
+<script src="//d3js.org/d3.v4.js"></script>
 <script type="text/javascript" src="../forceInABox.js"></script>
 <script>
 /* global d3, forceInABox */
 
 var useGroupInABox = true,
   drawTreeMap = false,
-  template = "treemap";
+  template = "force";
 
 d3.select("#checkGroupInABox").property("checked", useGroupInABox);
 d3.select("#checkShowTreemap").property("checked", drawTreeMap);
@@ -58,13 +58,11 @@ d3.json("miserables.json", function(error, graph) {
   force
       .nodes(graph.nodes)
       .force("group", forceInABox()
-          .nodes(graph.nodes)
-          .links(graph.links)
-          .strength(0.1)
-          .gravityOverall(0.05)
-          .template(template)
-          .groupBy("group")
-          .size([width, height])
+          .strength(0.1) // Strength to foci
+          .template(template) // Either treemap or force
+          .groupBy("group") // Node attribute to group
+          .links(graph.links) // The graph links. Must be called after setting the grouping attribute
+          .size([width, height]) // Size of the chart
         )
 
       .force("link", d3.forceLink(graph.links).distance(50).strength(
@@ -88,11 +86,7 @@ d3.json("miserables.json", function(error, graph) {
   node.append("title")
       .text(function(d) { return d.name; });
 
-  force.on("tick", function(e) {
-    // if (useGroupInABox) {
-    //   force.onTick(e);
-    // }
-
+  force.on("tick", function() {
     link.attr("x1", function(d) { return d.source.x; })
         .attr("y1", function(d) { return d.source.y; })
         .attr("x2", function(d) { return d.target.x; })
@@ -109,7 +103,7 @@ d3.json("miserables.json", function(error, graph) {
         .force("link", d3.forceLink(graph.links).distance(50).strength(
         function (l) { return !useGroupInABox? 0.7 :
             l.source.group!==l.target.group ? 0 : 0.1;
-      })).force("group").enableGrouping(useGroupInABox)
+        })).force("group").enableGrouping(useGroupInABox)
 
     force.alphaTarget(0.5).restart();
   });
@@ -129,9 +123,6 @@ d3.json("miserables.json", function(error, graph) {
       force.force("group").deleteTemplate(svg);
     }
   });
-
-
-
 });
 
 </script>
