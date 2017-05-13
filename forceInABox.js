@@ -10,8 +10,8 @@ function forceInABox(alpha) {
       links, //needed for the force version
       tree,
       size = [100,100],
-      nodeSize = 5, // The expected node size used for computing the cluster node
-      forceCharge = -200,
+      nodeSize = 1, // The expected node size used for computing the cluster node
+      forceCharge = -2,
       foci = {},
       // oldStart = force.start,
       linkStrengthIntraCluster = 0.1,
@@ -217,6 +217,8 @@ function forceInABox(alpha) {
   function checkLinksAsObjects() {
     // Check if links come in the format of indexes instead of objects
     var linkCount = 0;
+    if (nodes.length===0) return;
+
     links.forEach(function (link) {
       var source, target;
       if (!nodes) return;
@@ -232,6 +234,7 @@ function forceInABox(alpha) {
       link.index = linkCount++;
     });
   }
+
   function initializeWithForce() {
     var net;
 
@@ -249,7 +252,7 @@ function forceInABox(alpha) {
       .force("y", d3.forceY(size[1]/2).strength(0.5))
       .force("collide", d3.forceCollide(function (d) { return d.size*nodeSize; }))
       .force("charge", d3.forceManyBody().strength(function (d) { return forceCharge * d.size; }))
-      .force("links", d3.forceLink(net.links))
+      .force("links", d3.forceLink(!net.nodes ? net.links :[]))
 
     templateNodes = templateForce.nodes();
 
