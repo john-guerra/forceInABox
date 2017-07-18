@@ -1,6 +1,6 @@
-/* global d3 */
+import * as d3 from 'd3';
 
-function forceInABox(alpha) {
+export default function forceInABox(alpha) {
   function index(d) {
     return d.index;
   }
