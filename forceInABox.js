@@ -1,6 +1,6 @@
-import * as d3 from 'd3';
+const d3 = require('d3');
 
-export default function forceInABox(alpha) {
+function forceInABox(alpha) {
   function index(d) {
     return d.index;
   }
@@ -408,3 +408,5 @@ export default function forceInABox(alpha) {
 
   return force;
 }
+
+module.exports = forceInABox;
