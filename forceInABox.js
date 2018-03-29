@@ -114,11 +114,13 @@ function forceInABox(alpha) {
       var source, target;
       source = d.key.split("~")[0];
       target = d.key.split("~")[1];
-      clusterLinks.push({
-        "source":source,
-        "target":target,
-        "count":d.value,
-      });
+      if (source !== undefined && target !== undefined) {
+        clusterLinks.push({
+          "source":source,
+          "target":target,
+          "count":d.value,
+        });
+      }
     });
     return clusterLinks;
   }
@@ -149,11 +151,17 @@ function forceInABox(alpha) {
     }
 
     clustersLinks.forEach(function (l) {
-      glinks.push({
-        "source":dNodes.get(l.source),
-        "target":dNodes.get(l.target),
-        "count":l.count
-      });
+      source = dNodes.get(l.source);
+      target = dNodes.get(l.target);
+      if (source!==undefined && target !== undefined) {
+        glinks.push({
+          "source": source,
+          "target": target,
+          "count":l.count
+        });
+      } else {
+        console.log("Force in a box error, couldn't find the link source or target on the list of nodes");
+      }
     });
 
 
