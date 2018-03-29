@@ -252,7 +252,7 @@ function forceInABox(alpha) {
       .force("y", d3.forceY(size[1]/2).strength(0.5))
       .force("collide", d3.forceCollide(function (d) { return d.size*nodeSize; }))
       .force("charge", d3.forceManyBody().strength(function (d) { return forceCharge * d.size; }))
-      .force("links", d3.forceLink(!net.nodes ? net.links :[]))
+      .force("links", d3.forceLink(!net.nodes ? net.links :[]));
 
     templateNodes = templateForce.nodes();
 
