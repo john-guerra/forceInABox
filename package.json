@@ -1,25 +1,23 @@
 {
   "name": "forceInABox",
   "version": "1.0.0",
-  "description": "forceInABox.js ==============",
+  "description": "forceInABox.js a d3 force for distribution nodes using the group-in-a-box algorithm",
+  "author": "",
   "main": "forceInABox.js",
   "directories": {
     "example": "example"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aendrew/forceInABox.git"
+    "url": "git+https://github.com/john-guerra/forceInABox.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/aendrew/forceInABox/issues"
+    "url": "https://github.com/john-guerra/forceInABox/issues"
   },
-  "homepage": "https://github.com/aendrew/forceInABox#readme",
+  "homepage": "https://github.com/john-guerra/forceInABox#readme",
   "dependencies": {
     "d3": "^4.10.0"
   }
