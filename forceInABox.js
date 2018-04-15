@@ -1,4 +1,4 @@
-const d3 = require('d3');
+/* global d3 */
 
 function forceInABox(alpha) {
   function index(d) {
@@ -416,5 +416,3 @@ function forceInABox(alpha) {
 
   return force;
 }
-
-module.exports = forceInABox;
