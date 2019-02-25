@@ -208,11 +208,9 @@ export default function forceInABox() {
       .size(force.size());
 
     tree = d3.hierarchy(getGroupsTree())
-      // .sort(function (p, q) { return d3.ascending(p.size, q.size); })
-      // .count()
       .sum(function (d) { return d.size; })
       .sort(function(a, b) {
-        return b.height - a.height || b.size - a.size;
+        return b.height - a.height || b.value - a.value;
       });
 
     templateNodes = treemap(tree).leaves();
