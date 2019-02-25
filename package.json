@@ -1,13 +1,22 @@
 {
-  "name": "forceInABox",
-  "version": "1.0.0",
-  "description": "forceInABox.js a d3 force for distribution nodes using the group-in-a-box algorithm",
-  "author": "",
-  "main": "forceInABox.js",
+  "name": "force-in-a-box",
+  "version": "0.0.1",
+  "description": "forceInABox.js a d3 force for separating nodes in a d3.forceSimulation by their cluster or other attributes, using the group-in-a-box algorithm",
+  "author": "John Alexis Guerra Gómez",
+  "main": "build/forceInABox.js",
+  "module": "dist/forceInABox.esm.js",
+  "browser": "dist/forceInABox.min.js",
+  "unpkg": "dist/forceInABox.min.js",
+  "jsdelivr": "dist/forceInABox.min.js",
   "directories": {
     "example": "example"
   },
-
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test": "node test/test.js",
+    "pretest": "npm run build"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/john-guerra/forceInABox.git"
@@ -20,5 +29,14 @@
   "homepage": "https://github.com/john-guerra/forceInABox#readme",
   "dependencies": {
     "d3": "^4.10.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "prettier": "^1.16.4",
+    "rollup": "^0.65.0",
+    "rollup-plugin-ascii": "0.0.3",
+    "rollup-plugin-commonjs": "^9.1.0",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-terser": "^2.0.2"
   }
 }

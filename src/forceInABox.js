@@ -1,31 +1,31 @@
-/* global d3 */
+import * as d3 from "d3";
 
-function forceInABox(alpha) {
+export default function forceInABox() {
   function index(d) {
     return d.index;
   }
 
   var id = index,
-      nodes,
-      links, //needed for the force version
-      tree,
-      size = [100,100],
-      nodeSize = 1, // The expected node size used for computing the cluster node
-      forceCharge = -2,
-      foci = {},
-      // oldStart = force.start,
-      linkStrengthIntraCluster = 0.1,
-      linkStrengthInterCluster = 0.01,
-      // oldGravity = force.gravity(),
-      templateNodes = [],
-      offset = [0,0],
-      templateForce,
-      templateNodesSel,
-      groupBy = function (d) { return d.cluster; },
-      template = "treemap",
-      enableGrouping = true,
-      strength = 0.1;
-      // showingTemplate = false;
+    nodes,
+    links, //needed for the force version
+    tree,
+    size = [100,100],
+    nodeSize = 1, // The expected node size used for computing the cluster node
+    forceCharge = -2,
+    foci = {},
+    // oldStart = force.start,
+    linkStrengthIntraCluster = 0.1,
+    linkStrengthInterCluster = 0.01,
+    // oldGravity = force.gravity(),
+    templateNodes = [],
+    offset = [0,0],
+    templateForce,
+    templateNodesSel,
+    groupBy = function (d) { return d.cluster; },
+    template = "treemap",
+    enableGrouping = true,
+    strength = 0.1;
+    // showingTemplate = false;
 
 
   function force(alpha) {
@@ -140,7 +140,7 @@ function forceInABox(alpha) {
     clustersCounts = computeClustersNodeCounts(nodes);
     clustersLinks = computeClustersLinkCounts(links);
 
-    //map.keys() is really slow, it's crucial to have it outside the loop
+    //map.keys() is really slow, it"s crucial to have it outside the loop
     clustersList = clustersCounts.keys();
     for (i = 0; i< clustersList.length ; i+=1) {
       c = clustersList[i];
@@ -151,8 +151,8 @@ function forceInABox(alpha) {
     }
 
     clustersLinks.forEach(function (l) {
-      source = dNodes.get(l.source);
-      target = dNodes.get(l.target);
+      var source = dNodes.get(l.source),
+        target = dNodes.get(l.target);
       if (source!==undefined && target !== undefined) {
         glinks.push({
           "source": source,
@@ -160,7 +160,7 @@ function forceInABox(alpha) {
           "count":l.count
         });
       } else {
-        console.log("Force in a box error, couldn't find the link source or target on the list of nodes");
+        // console.log("Force in a box error, couldn"t find the link source or target on the list of nodes");
       }
     });
 
@@ -171,22 +171,21 @@ function forceInABox(alpha) {
 
   function getGroupsTree() {
     var children = [],
-      totalSize = 0,
+      // totalSize = 0,
       clustersList,
       c, i, size, clustersCounts;
 
     clustersCounts = computeClustersNodeCounts(force.nodes());
 
-    //map.keys() is really slow, it's crucial to have it outside the loop
+    //map.keys() is really slow, it"s crucial to have it outside the loop
     clustersList = clustersCounts.keys();
     for (i = 0; i< clustersList.length ; i+=1) {
       c = clustersList[i];
       size = clustersCounts.get(c);
       children.push({id : c, size :size });
-      totalSize += size;
+      // totalSize += size;
     }
-    // return {id: "clustersTree", size: totalSize, children : children};
-    return {id: "clustersTree",  children : children};
+    return {id: "clustersTree", children : children};
   }
 
 
@@ -213,12 +212,10 @@ function forceInABox(alpha) {
       // .count()
       .sum(function (d) { return d.size; })
       .sort(function(a, b) {
-        return b.height - a.height || b.value - a.value; })
-      ;
-
+        return b.height - a.height || b.size - a.size;
+      });
 
     templateNodes = treemap(tree).leaves();
-
     getFocisFromTemplate();
   }
 
@@ -235,8 +232,8 @@ function forceInABox(alpha) {
       if (typeof link.source !== "object") source = nodes[link.source];
       if (typeof link.target !== "object") target = nodes[link.target];
       if (source === undefined || target === undefined) {
-        console.log(link);
-        throw Error("Error setting links, couldn't find nodes for a link (see it on the console)" );
+        // console.error(link);
+        throw Error("Error setting links, couldnt find nodes for a link (see it on the console)" );
       }
       link.source = source; link.target = target;
       link.index = linkCount++;
@@ -248,7 +245,7 @@ function forceInABox(alpha) {
 
     if (nodes && nodes.length>0) {
       if (groupBy(nodes[0])===undefined) {
-        throw Error("Couldn't find the grouping attribute for the nodes. Make sure to set it up with forceInABox.groupBy('attr') before calling .links()");
+        throw Error("Couldnt find the grouping attribute for the nodes. Make sure to set it up with forceInABox.groupBy('attr) before calling .links()");
       }
     }
 
@@ -365,10 +362,10 @@ function forceInABox(alpha) {
     } else {
       // Not grouping return the intracluster
       if (typeof(linkStrengthIntraCluster)==="function") {
-          return linkStrengthIntraCluster(e);
-        } else {
-          return linkStrengthIntraCluster;
-        }
+        return linkStrengthIntraCluster(e);
+      } else {
+        return linkStrengthIntraCluster;
+      }
 
     }
   };
