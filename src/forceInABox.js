@@ -270,7 +270,7 @@ export default function forceInABox() {
     if (nodes && nodes.length > 0) {
       if (groupBy(nodes[0]) === undefined) {
         throw Error(
-          "Couldnt find the grouping attribute for the nodes. Make sure to set it up with forceInABox.groupBy('attr) before calling .links()"
+          "Couldnt find the grouping attribute for the nodes. Make sure to set it up with forceInABox.groupBy('clusterAttr') before calling .links()"
         );
       }
     }
@@ -298,8 +298,8 @@ export default function forceInABox() {
 
     // console.log("Initialize with force ", templateForce.nodes().length, " ", templateForce.force("links").links().length);
 
-    var i = 0;
-    while (i++ < 500) templateForce.tick();
+    // var i = 0;
+    // while (i++ < 500) templateForce.tick();
 
     templateNodes = templateForce.nodes();
 
@@ -343,9 +343,10 @@ export default function forceInABox() {
       .attr("y2", function(d) { return d.source.y; })
       .attr("x1", function(d) { return d.target.x; })
       .attr("y1", function(d) { return d.target.y; })
-      .attr("stroke-width", "1px");
+      .style("stroke-width", "1px")
+      .style("stroke-opacity", "0.5");
 
-    var templateNodesSel = container.selectAll("circle.cell").data(templateNodes);
+    var templateNodesSel = container.selectAll("circle.cell").data(templateForce.nodes());
     templateNodesSel
       .enter()
       .append("svg:circle")
@@ -363,12 +364,12 @@ export default function forceInABox() {
 
 
 
-    templateForce
-      .on("tick", () => {
-        // console.log("tick");
-        drawGraph(container);
-      })
-      .restart();
+    // templateForce
+    //   .on("tick", () => {
+    //     // console.log("tick");
+    //     drawGraph(container);
+    //   })
+    //   .restart();
   }
 
   force.drawTemplate = function(container) {
