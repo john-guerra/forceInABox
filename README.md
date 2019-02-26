@@ -5,7 +5,7 @@ forceInABox.js
 
 Updated for d3.v4
 
-**[Test forceInABox on this observableNotebook](https://observablehq.com/@john-guerra/force-in-a-box) **
+[**Test forceInABox on this observableNotebook**](https://observablehq.com/@john-guerra/force-in-a-box)
 
 A d3.js v4 force that implements the [Group-in-a-box](http://hcil2.cs.umd.edu/trs/2011-24/2011-24.pdf) layout algorithm to distribute nodes in a network according to their clusters. The algorithm uses a treemap or a force diagram to compute focis that are later used to distribute each cluster into it's own box.
 
