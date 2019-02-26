@@ -390,9 +390,11 @@ export default function forceInABox() {
     // showingTemplate = false;
     container.selectAll(".cell").remove();
 
-    templateForce
-      .on("tick", null)
-      .restart();
+    if (templateForce) {
+      templateForce
+        .on("tick", null)
+        .restart();
+    }
 
 
     return force;
