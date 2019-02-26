@@ -22,7 +22,7 @@ export default function forceInABox() {
     foci = {},
     // oldStart = force.start,
     linkStrengthIntraCluster = 0.1,
-    linkStrengthInterCluster = 0.01,
+    linkStrengthInterCluster = 0.001,
     // oldGravity = force.gravity(),
     templateNodes = [],
     offset = [0, 0],
@@ -362,14 +362,15 @@ export default function forceInABox() {
         return d.r;
       });
 
+    templateForce
+      .on("tick", () => {
+         // console.log("tick");
+         drawGraph(container);
+      })
+      .restart();
 
-
-    // templateForce
-    //   .on("tick", () => {
-    //     // console.log("tick");
-    //     drawGraph(container);
-    //   })
-    //   .restart();
+    templateNodesSel.exit().remove();
+    templateLinksSel.exit().remove();
   }
 
   force.drawTemplate = function(container) {
@@ -388,6 +389,11 @@ export default function forceInABox() {
   force.deleteTemplate = function(container) {
     // showingTemplate = false;
     container.selectAll(".cell").remove();
+
+    templateForce
+      .on("tick", null)
+      .restart();
+
 
     return force;
   };
