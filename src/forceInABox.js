@@ -296,7 +296,7 @@ export default function forceInABox() {
           .strength(forceLinkStrength)
       );
 
-    console.log("Initialize with force ", templateForce.nodes().length, " ", templateForce.force("links").links().length);
+    // console.log("Initialize with force ", templateForce.nodes().length, " ", templateForce.force("links").links().length);
 
     var i = 0;
     while (i++ < 500) templateForce.tick();
@@ -365,7 +365,7 @@ export default function forceInABox() {
 
     templateForce
       .on("tick", () => {
-        console.log("tick");
+        // console.log("tick");
         drawGraph(container);
       })
       .restart();
