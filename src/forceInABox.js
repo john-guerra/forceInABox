@@ -221,6 +221,7 @@ export default function forceInABox() {
         };
       }
     });
+    return foci;
   }
   function initializeWithTreemap() {
     var treemap = d3.treemap().size(force.size());
@@ -521,6 +522,8 @@ export default function forceInABox() {
       ? ((offset = typeof _ === "function" ? _ : constant(+_)), force)
       : offset;
   };
+
+  force.getFocis = getFocisFromTemplate;
 
   return force;
 }
