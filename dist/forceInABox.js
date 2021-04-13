@@ -1,6 +1,11 @@
-import * as d3 from "d3";
+// https://github.com/john-guerra/forceInABox#readme v0.0.9 Copyright 2020 undefined
+(function (global, factory) {
+typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('d3')) :
+typeof define === 'function' && define.amd ? define(['d3'], factory) :
+(global.forceInABox = factory(global.d3));
+}(this, (function (d3) { 'use strict';
 
-export default function forceInABox() {
+function forceInABox() {
   // d3 style
   function constant(_) {
     return () => _;
@@ -172,8 +177,6 @@ export default function forceInABox() {
           target: target,
           count: l.count
         });
-      } else {
-        // console.log("Force in a box error, couldn"t find the link source or target on the list of nodes");
       }
     });
 
@@ -184,7 +187,6 @@ export default function forceInABox() {
     var children = [],
       // totalSize = 0,
       c,
-      i,
       cc,
       clustersCounts;
 
@@ -219,8 +221,7 @@ export default function forceInABox() {
   function initializeWithTreemap() {
     var treemap = d3.treemap().size(force.size());
 
-    tree = d3
-      .hierarchy(getGroupsTree())
+    tree = d3.hierarchy(getGroupsTree())
       .sum(function(d) {
         return d.size;
       })
@@ -272,8 +273,7 @@ export default function forceInABox() {
     checkLinksAsObjects();
 
     net = getGroupsGraph();
-    templateForce = d3
-      .forceSimulation(net.nodes)
+    templateForce = d3.forceSimulation(net.nodes)
       .force("x", d3.forceX(size[0] / 2).strength(0.1))
       .force("y", d3.forceY(size[1] / 2).strength(0.1))
       .force(
@@ -522,3 +522,7 @@ export default function forceInABox() {
 }
 
 // module.exports = forceInABox;
+
+return forceInABox;
+
+})));
