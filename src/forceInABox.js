@@ -10,7 +10,7 @@ export default function forceInABox() {
     return d.index;
   }
 
-  var id = index,
+  let id = index,
     nodes = [],
     links = [], //needed for the force version
     tree,
@@ -27,7 +27,7 @@ export default function forceInABox() {
     templateNodes = [],
     offset = [0, 0],
     templateForce,
-    groupBy = function(d) {
+    groupBy = function (d) {
       return d.cluster;
     },
     template = "treemap",
@@ -45,7 +45,7 @@ export default function forceInABox() {
       getFocisFromTemplate();
     }
 
-    for (var i = 0, n = nodes.length, node, k = alpha * strength; i < n; ++i) {
+    for (let i = 0, n = nodes.length, node, k = alpha * strength; i < n; ++i) {
       node = nodes[i];
       node.vx += (foci[groupBy(node)].x - node.x) * k;
       node.vy += (foci[groupBy(node)].y - node.y) * k;
@@ -55,7 +55,7 @@ export default function forceInABox() {
   function initialize() {
     if (!nodes) return;
 
-    // var i,
+    // let i,
     //     n = nodes.length,
     //     m = links.length,
     //     nodeById = map(nodes, id),
@@ -68,13 +68,13 @@ export default function forceInABox() {
     }
   }
 
-  force.initialize = function(_) {
+  force.initialize = function (_) {
     nodes = _;
     initialize();
   };
 
   function getLinkKey(l) {
-    var sourceID = groupBy(l.source),
+    let sourceID = groupBy(l.source),
       targetID = groupBy(l.target);
 
     return sourceID <= targetID
@@ -83,21 +83,22 @@ export default function forceInABox() {
   }
 
   function computeClustersNodeCounts(nodes) {
-    var clustersCounts = new Map(),
+    let clustersCounts = new Map(),
       tmpCount = {};
 
-    nodes.forEach(function(d) {
+    nodes.forEach(function (d) {
       if (!clustersCounts.has(groupBy(d))) {
         clustersCounts.set(groupBy(d), { count: 0, sumforceNodeSize: 0 });
       }
     });
 
-    nodes.forEach(function(d) {
+    nodes.forEach(function (d) {
       // if (!d.show) { return; }
       tmpCount = clustersCounts.get(groupBy(d));
       tmpCount.count = tmpCount.count + 1;
       tmpCount.sumforceNodeSize =
-        tmpCount.sumforceNodeSize + Math.PI * (forceNodeSize(d) * forceNodeSize(d)) * 1.3;
+        tmpCount.sumforceNodeSize +
+        Math.PI * (forceNodeSize(d) * forceNodeSize(d)) * 1.3;
       clustersCounts.set(groupBy(d), tmpCount);
     });
 
@@ -106,11 +107,11 @@ export default function forceInABox() {
 
   //Returns
   function computeClustersLinkCounts(links) {
-    var dClusterLinks = new Map(),
+    let dClusterLinks = new Map(),
       clusterLinks = [];
-    
-    links.forEach(function(l) {
-      var key = getLinkKey(l),
+
+    links.forEach(function (l) {
+      let key = getLinkKey(l),
         count;
       if (dClusterLinks.has(key)) {
         count = dClusterLinks.get(key);
@@ -121,15 +122,15 @@ export default function forceInABox() {
       dClusterLinks.set(key, count);
     });
 
-    dClusterLinks.forEach(function(value, key) {
-      var source, target;
+    dClusterLinks.forEach(function (value, key) {
+      let source, target;
       source = key.split("~")[0];
       target = key.split("~")[1];
       if (source !== undefined && target !== undefined) {
         clusterLinks.push({
           source: source,
           target: target,
-          count: value
+          count: value,
         });
       }
     });
@@ -138,7 +139,7 @@ export default function forceInABox() {
 
   //Returns the metagraph of the clusters
   function getGroupsGraph() {
-    var gnodes = [],
+    let gnodes = [],
       glinks = [],
       // edges = [],
       dNodes = new Map(),
@@ -157,20 +158,20 @@ export default function forceInABox() {
       gnodes.push({
         id: c,
         size: cc.count,
-        r: Math.sqrt(cc.sumforceNodeSize / Math.PI)
+        r: Math.sqrt(cc.sumforceNodeSize / Math.PI),
       }); // Uses approx meta-node size
       dNodes.set(c, i);
       // totalSize += size;
     }
 
-    clustersLinks.forEach(function(l) {
-      var source = dNodes.get(l.source),
+    clustersLinks.forEach(function (l) {
+      let source = dNodes.get(l.source),
         target = dNodes.get(l.target);
       if (source !== undefined && target !== undefined) {
         glinks.push({
           source: source,
           target: target,
-          count: l.count
+          count: l.count,
         });
       } else {
         // console.log("Force in a box error, couldn"t find the link source or target on the list of nodes");
@@ -181,10 +182,8 @@ export default function forceInABox() {
   }
 
   function getGroupsTree() {
-    var children = [],
-      // totalSize = 0,
+    let children = [],
       c,
-      i,
       cc,
       clustersCounts;
 
@@ -193,7 +192,6 @@ export default function forceInABox() {
     for (c of clustersCounts.keys()) {
       cc = clustersCounts.get(c);
       children.push({ id: c, size: cc.count });
-      // totalSize += size;
     }
     return { id: "clustersTree", children: children };
   }
@@ -201,16 +199,16 @@ export default function forceInABox() {
   function getFocisFromTemplate() {
     //compute foci
     foci.none = { x: 0, y: 0 };
-    templateNodes.forEach(function(d) {
+    templateNodes.forEach(function (d) {
       if (template === "treemap") {
         foci[d.data.id] = {
           x: d.x0 + (d.x1 - d.x0) / 2 - offset[0],
-          y: d.y0 + (d.y1 - d.y0) / 2 - offset[1]
+          y: d.y0 + (d.y1 - d.y0) / 2 - offset[1],
         };
       } else {
         foci[d.id] = {
           x: d.x - offset[0],
-          y: d.y - offset[1]
+          y: d.y - offset[1],
         };
       }
     });
@@ -218,14 +216,14 @@ export default function forceInABox() {
   }
 
   function initializeWithTreemap() {
-    var treemap = d3.treemap().size(force.size());
+    let treemap = d3.treemap().size(force.size());
 
     tree = d3
       .hierarchy(getGroupsTree())
-      .sum(function(d) {
+      .sum(function (d) {
         return d.size;
       })
-      .sort(function(a, b) {
+      .sort(function (a, b) {
         return b.height - a.height || b.value - a.value;
       });
 
@@ -235,11 +233,11 @@ export default function forceInABox() {
 
   function checkLinksAsObjects() {
     // Check if links come in the format of indexes instead of objects
-    var linkCount = 0;
+    let linkCount = 0;
     if (nodes.length === 0) return;
 
-    links.forEach(function(link) {
-      var source, target;
+    links.forEach(function (link) {
+      let source, target;
       if (!nodes) return;
       source = link.source;
       target = link.target;
@@ -258,9 +256,11 @@ export default function forceInABox() {
   }
 
   function initializeWithForce() {
-    var net;
+    let net;
 
-    if (!nodes || !nodes.length ) { return; }
+    if (!nodes || !nodes.length) {
+      return;
+    }
 
     if (nodes && nodes.length > 0) {
       if (groupBy(nodes[0]) === undefined) {
@@ -279,21 +279,24 @@ export default function forceInABox() {
       .force("y", d3.forceY(size[1] / 2).strength(0.1))
       .force(
         "collide",
-        d3.forceCollide(function(d) {
-          return d.r;
-        }).iterations(4)
+        d3
+          .forceCollide(function (d) {
+            return d.r;
+          })
+          .iterations(4)
       )
       .force("charge", d3.forceManyBody().strength(forceCharge))
       .force(
         "links",
-        d3.forceLink(net.nodes.length ? net.links : [])
+        d3
+          .forceLink(net.nodes.length ? net.links : [])
           .distance(forceLinkDistance)
           .strength(forceLinkStrength)
       );
 
     // console.log("Initialize with force ", templateForce.nodes().length, " ", templateForce.force("links").links().length);
 
-    // var i = 0;
+    // let i = 0;
     // while (i++ < 500) templateForce.tick();
 
     templateNodes = templateForce.nodes();
@@ -311,16 +314,16 @@ export default function forceInABox() {
       .enter()
       .append("svg:rect")
       .attr("class", "cell")
-      .attr("x", function(d) {
+      .attr("x", function (d) {
         return d.x0;
       })
-      .attr("y", function(d) {
+      .attr("y", function (d) {
         return d.y0;
       })
-      .attr("width", function(d) {
+      .attr("width", function (d) {
         return d.x1 - d.x0;
       })
-      .attr("height", function(d) {
+      .attr("height", function (d) {
         return d.y1 - d.y0;
       });
   }
@@ -328,39 +331,51 @@ export default function forceInABox() {
   function drawGraph(container) {
     // Delete the treemap if any
     container.selectAll("rect.cell").remove();
-    var templateLinksSel = container.selectAll("line.cell").data(templateForce.force("links").links());
+    let templateLinksSel = container
+      .selectAll("line.cell")
+      .data(templateForce.force("links").links());
     templateLinksSel
       .enter()
       .append("line")
       .attr("class", "cell")
       .merge(templateLinksSel)
-      .attr("x2", function(d) { return d.source.x; })
-      .attr("y2", function(d) { return d.source.y; })
-      .attr("x1", function(d) { return d.target.x; })
-      .attr("y1", function(d) { return d.target.y; })
+      .attr("x2", function (d) {
+        return d.source.x;
+      })
+      .attr("y2", function (d) {
+        return d.source.y;
+      })
+      .attr("x1", function (d) {
+        return d.target.x;
+      })
+      .attr("y1", function (d) {
+        return d.target.y;
+      })
       .style("stroke-width", "1px")
       .style("stroke-opacity", "0.5");
 
-    var templateNodesSel = container.selectAll("circle.cell").data(templateForce.nodes());
+    let templateNodesSel = container
+      .selectAll("circle.cell")
+      .data(templateForce.nodes());
     templateNodesSel
       .enter()
       .append("svg:circle")
       .attr("class", "cell")
       .merge(templateNodesSel)
-      .attr("cx", function(d) {
+      .attr("cx", function (d) {
         return d.x;
       })
-      .attr("cy", function(d) {
+      .attr("cy", function (d) {
         return d.y;
       })
-      .attr("r", function(d) {
+      .attr("r", function (d) {
         return d.r;
       });
 
     templateForce
       .on("tick", () => {
-         // console.log("tick");
-         drawGraph(container);
+        // console.log("tick");
+        drawGraph(container);
       })
       .restart();
 
@@ -368,7 +383,7 @@ export default function forceInABox() {
     templateLinksSel.exit().remove();
   }
 
-  force.drawTemplate = function(container) {
+  force.drawTemplate = function (container) {
     // showingTemplate = true;
     if (template === "treemap") {
       drawTreemap(container);
@@ -381,31 +396,28 @@ export default function forceInABox() {
   //Backwards compatibility
   force.drawTreemap = force.drawTemplate;
 
-  force.deleteTemplate = function(container) {
+  force.deleteTemplate = function (container) {
     // showingTemplate = false;
     container.selectAll(".cell").remove();
 
     if (templateForce) {
-      templateForce
-        .on("tick", null)
-        .restart();
+      templateForce.on("tick", null).restart();
     }
-
 
     return force;
   };
 
-  force.template = function(x) {
+  force.template = function (x) {
     if (!arguments.length) return template;
     template = x;
     initialize();
     return force;
   };
 
-  force.groupBy = function(x) {
+  force.groupBy = function (x) {
     if (!arguments.length) return groupBy;
     if (typeof x === "string") {
-      groupBy = function(d) {
+      groupBy = function (d) {
         return d[x];
       };
       return force;
@@ -414,20 +426,20 @@ export default function forceInABox() {
     return force;
   };
 
-  force.enableGrouping = function(x) {
+  force.enableGrouping = function (x) {
     if (!arguments.length) return enableGrouping;
     enableGrouping = x;
     // update();
     return force;
   };
 
-  force.strength = function(x) {
+  force.strength = function (x) {
     if (!arguments.length) return strength;
     strength = x;
     return force;
   };
 
-  force.getLinkStrength = function(e) {
+  force.getLinkStrength = function (e) {
     if (enableGrouping) {
       if (groupBy(e.source) === groupBy(e.target)) {
         if (typeof linkStrengthIntraCluster === "function") {
@@ -452,31 +464,31 @@ export default function forceInABox() {
     }
   };
 
-  force.id = function(_) {
+  force.id = function (_) {
     return arguments.length ? ((id = _), force) : id;
   };
 
-  force.size = function(_) {
+  force.size = function (_) {
     return arguments.length ? ((size = _), force) : size;
   };
 
-  force.linkStrengthInterCluster = function(_) {
+  force.linkStrengthInterCluster = function (_) {
     return arguments.length
       ? ((linkStrengthInterCluster = _), force)
       : linkStrengthInterCluster;
   };
 
-  force.linkStrengthIntraCluster = function(_) {
+  force.linkStrengthIntraCluster = function (_) {
     return arguments.length
       ? ((linkStrengthIntraCluster = _), force)
       : linkStrengthIntraCluster;
   };
 
-  force.nodes = function(_) {
+  force.nodes = function (_) {
     return arguments.length ? ((nodes = _), force) : nodes;
   };
 
-  force.links = function(_) {
+  force.links = function (_) {
     if (!arguments.length) return links;
     if (_ === null) links = [];
     else links = _;
@@ -484,34 +496,42 @@ export default function forceInABox() {
     return force;
   };
 
-  force.forceNodeSize = function(_) {
+  force.forceNodeSize = function (_) {
     return arguments.length
-      ? ((forceNodeSize = typeof _ === "function" ? _ : constant(+_)), initialize(), force)
+      ? ((forceNodeSize = typeof _ === "function" ? _ : constant(+_)),
+        initialize(),
+        force)
       : forceNodeSize;
   };
 
   // Legacy support
   force.nodeSize = force.forceNodeSize;
 
-  force.forceCharge = function(_) {
+  force.forceCharge = function (_) {
     return arguments.length
-      ? ((forceCharge = typeof _ === "function" ? _ : constant(+_)), initialize(), force)
+      ? ((forceCharge = typeof _ === "function" ? _ : constant(+_)),
+        initialize(),
+        force)
       : forceCharge;
   };
 
-  force.forceLinkDistance = function(_) {
+  force.forceLinkDistance = function (_) {
     return arguments.length
-      ? ((forceLinkDistance = typeof _ === "function" ? _ : constant(+_)), initialize(), force)
+      ? ((forceLinkDistance = typeof _ === "function" ? _ : constant(+_)),
+        initialize(),
+        force)
       : forceLinkDistance;
   };
 
-  force.forceLinkStrength = function(_) {
+  force.forceLinkStrength = function (_) {
     return arguments.length
-      ? ((forceLinkStrength = typeof _ === "function" ? _ : constant(+_)), initialize(), force)
+      ? ((forceLinkStrength = typeof _ === "function" ? _ : constant(+_)),
+        initialize(),
+        force)
       : forceLinkStrength;
   };
 
-  force.offset = function(_) {
+  force.offset = function (_) {
     return arguments.length
       ? ((offset = typeof _ === "function" ? _ : constant(+_)), force)
       : offset;

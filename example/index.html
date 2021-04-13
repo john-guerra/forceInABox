@@ -29,7 +29,7 @@
   <script>
 /* global d3, forceInABox*/
 
-var useGroupInABox = true,
+let useGroupInABox = true,
   drawTemplate = true,
   template = "force";
 
@@ -37,19 +37,19 @@ d3.select("#checkGroupInABox").property("checked", useGroupInABox);
 d3.select("#checkShowTreemap").property("checked", drawTemplate);
 d3.select("#selectTemplate").property("value", template);
 
-var width = 900,
+let width = 900,
   height = 600;
 
-var color = d3.scaleOrdinal(d3.schemeCategory10);
+let color = d3.scaleOrdinal(d3.schemeCategory10);
 
-var force = d3
+let force = d3
   .forceSimulation()
   .force("collide", d3.forceCollide(5));
   // .force("charge", d3.forceManyBody())
   // .force("x", d3.forceX(width / 2).strength(0.05))
   // .force("y", d3.forceY(height / 2).strength(0.05));
 
-var svg = d3
+let svg = d3
   .select("#chart")
   .append("svg")
   .attr("width", width)
@@ -57,7 +57,7 @@ var svg = d3
 
 d3.json("./miserables.json").then(function(graph) {
 
-  var groupingForce = forceInABox()
+  let groupingForce = forceInABox()
     .strength(0.1) // Strength to foci
     .template(template) // Either treemap or force
     .groupBy("group") // Node attribute to group
@@ -78,7 +78,7 @@ d3.json("./miserables.json").then(function(graph) {
         .strength(groupingForce.getLinkStrength)
     );
 
-  var link = svg
+  let link = svg
     .selectAll(".link")
     .data(graph.links)
     .enter()
@@ -88,7 +88,7 @@ d3.json("./miserables.json").then(function(graph) {
       return Math.sqrt(d.value);
     });
 
-  var node = svg
+  let node = svg
     .selectAll(".node")
     .data(graph.nodes)
     .enter()
