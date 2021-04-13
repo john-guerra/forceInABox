@@ -4,7 +4,7 @@
   <img src="https://cdn.rawgit.com/john-guerra/forceInABox/6ffb1ab6/example/forceInABoxv4.gif" alt="Force in a Box animation demo" />
 </a>
 
-Updated for d3.v6 thanks to @giorgi-ghviniashvili
+<iframe width="100%" height="907" frameborder="0" src="https://observablehq.com/embed/@john-guerra/force-in-a-box?cells=viewof+useGroupInABox%2Cviewof+template%2Cviewof+drawTemplate%2Cchart"></iframe>
 
 [**Test forceInABox on this observableNotebook**](https://observablehq.com/@john-guerra/force-in-a-box)
 
