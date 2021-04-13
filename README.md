@@ -43,4 +43,4 @@ simulation.nodes(graph.nodes).force("group", groupingForce).force(
 );
 ```
 
-Here is a [forceInABox demo](https://bl.ocks.org/john-guerra/830e536314436e2c6396484bcc1e3b3d)
+Here is a [forceInABox demo](https://observablehq.com/@john-guerra/force-in-a-box)
