@@ -24,7 +24,7 @@
     <option value="force">Force</option>
   </select>
   <div id="chart"></div>
-  <script src="//d3js.org/d3.v4.js"></script>
+  <script src="//d3js.org/d3.v6.js"></script>
   <script type="text/javascript" src="../dist/forceInABox.js"></script>
   <script>
 /* global d3, forceInABox*/
@@ -40,7 +40,7 @@ d3.select("#selectTemplate").property("value", template);
 var width = 900,
   height = 600;
 
-var color = d3.scaleOrdinal(d3.schemeCategory20);
+var color = d3.scaleOrdinal(d3.schemeCategory10);
 
 var force = d3
   .forceSimulation()
@@ -55,7 +55,8 @@ var svg = d3
   .attr("width", width)
   .attr("height", height);
 
-d3.json("miserables.json", function(error, graph) {
+d3.json("./miserables.json").then(function(graph) {
+
   var groupingForce = forceInABox()
     .strength(0.1) // Strength to foci
     .template(template) // Either treemap or force
@@ -65,6 +66,7 @@ d3.json("miserables.json", function(error, graph) {
     .nodeSize(15) // Used to compute the size of the template nodes, think of it as the radius the node uses, including its padding
     .forceCharge(-50*15) // Separation between nodes on the force template
     .size([width, height]); // Size of the chart
+
   force
     .nodes(graph.nodes)
     .force("group", groupingForce)
@@ -168,8 +170,6 @@ d3.json("miserables.json", function(error, graph) {
     force.force("group").deleteTemplate(svg);
   }
 });
-
-
 
 function dragstarted(d) {
   if (!d3.event.active) force.alphaTarget(0.3).restart();

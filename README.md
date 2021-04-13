@@ -15,7 +15,7 @@ a note on input data format: **forceInABox** expects a graph object, with a `lin
 
 ```html
 <!-- Include d3.v4 or forceSimulation -->
-<script type="text/javascript" src="forceInABox.js">   </script>
+<script type="text/javascript" src="https://unpkg.com/force-in-a-box/dist/forceInABox.js">   </script>
 ```
 ```js
 // Create the simulation with a small forceX and Y towards the center
