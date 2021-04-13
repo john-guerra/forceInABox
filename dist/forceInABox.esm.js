@@ -1,4 +1,4 @@
-// https://github.com/john-guerra/forceInABox#readme v0.0.10 Copyright 2021 undefined
+// https://github.com/john-guerra/forceInABox#readme v0.0.11 Copyright 2021 undefined
 import { treemap, hierarchy, forceSimulation, forceX, forceY, forceCollide, forceManyBody, forceLink } from 'd3';
 
 function forceInABox() {

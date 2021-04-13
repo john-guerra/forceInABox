@@ -1,4 +1,4 @@
-// https://github.com/john-guerra/forceInABox#readme v0.0.10 Copyright 2021 undefined
+// https://github.com/john-guerra/forceInABox#readme v0.0.11 Copyright 2021 undefined
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('d3')) :
 typeof define === 'function' && define.amd ? define(['d3'], factory) :
