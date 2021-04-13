@@ -1,191 +1,200 @@
 <!DOCTYPE html>
-<meta charset="utf-8" />
-<style>
-  .node {
-    stroke: #fff;
-    stroke-width: 1.5px;
-  }
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
 
-  .link {
-    stroke: #999;
-    stroke-opacity: 0.6;
-  }
+    <title>ForceInABox.js example</title>
+    <style>
+      .node {
+        stroke: #fff;
+        stroke-width: 1.5px;
+      }
 
-  .cell {
-    fill: none;
-    stroke: grey;
-  }
-</style>
-<body>
-  <label><input id="checkGroupInABox" type="checkbox" />Group in a Box</label>
-  <label><input id="checkShowTreemap" type="checkbox" />Show Template</label>
-  <select id="selectTemplate">
-    <option value="treemap">Treemap</option>
-    <option value="force">Force</option>
-  </select>
-  <div id="chart"></div>
-  <script src="//d3js.org/d3.v6.js"></script>
-  <script type="text/javascript" src="../dist/forceInABox.js"></script>
-  <script>
-/* global d3, forceInABox*/
+      .link {
+        stroke: #999;
+        stroke-opacity: 0.6;
+      }
 
-let useGroupInABox = true,
-  drawTemplate = true,
-  template = "force";
+      .cell {
+        fill: none;
+        stroke: grey;
+      }
+    </style>
+  </head>
+  <body>
+    <label><input id="checkGroupInABox" type="checkbox" />Group in a Box</label>
+    <label><input id="checkShowTreemap" type="checkbox" />Show Template</label>
+    <select id="selectTemplate">
+      <option value="treemap">Treemap</option>
+      <option value="force">Force</option>
+    </select>
+    <div id="chart"></div>
+    <script src="//d3js.org/d3.v6.js"></script>
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/force-in-a-box/dist/forceInABox.js"
+    ></script>
+    <!-- <script type="text/javascript" src="../dist/forceInABox.js"></script> -->
+    <script>
+      /* global d3, forceInABox*/
 
-d3.select("#checkGroupInABox").property("checked", useGroupInABox);
-d3.select("#checkShowTreemap").property("checked", drawTemplate);
-d3.select("#selectTemplate").property("value", template);
+      let useGroupInABox = true,
+        drawTemplate = true,
+        template = "force";
 
-let width = 900,
-  height = 600;
+      d3.select("#checkGroupInABox").property("checked", useGroupInABox);
+      d3.select("#checkShowTreemap").property("checked", drawTemplate);
+      d3.select("#selectTemplate").property("value", template);
 
-let color = d3.scaleOrdinal(d3.schemeCategory10);
+      let width = 900,
+        height = 600;
 
-let force = d3
-  .forceSimulation()
-  .force("collide", d3.forceCollide(5));
-  // .force("charge", d3.forceManyBody())
-  // .force("x", d3.forceX(width / 2).strength(0.05))
-  // .force("y", d3.forceY(height / 2).strength(0.05));
+      let color = d3.scaleOrdinal(d3.schemeCategory10);
 
-let svg = d3
-  .select("#chart")
-  .append("svg")
-  .attr("width", width)
-  .attr("height", height);
+      let force = d3.forceSimulation().force("collide", d3.forceCollide(5));
+      // .force("charge", d3.forceManyBody())
+      // .force("x", d3.forceX(width / 2).strength(0.05))
+      // .force("y", d3.forceY(height / 2).strength(0.05));
 
-d3.json("./miserables.json").then(function(graph) {
+      let svg = d3
+        .select("#chart")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
 
-  let groupingForce = forceInABox()
-    .strength(0.1) // Strength to foci
-    .template(template) // Either treemap or force
-    .groupBy("group") // Node attribute to group
-    .links(graph.links) // The graph links. Must be called after setting the grouping attribute
-    .enableGrouping(useGroupInABox)
-    .nodeSize(15) // Used to compute the size of the template nodes, think of it as the radius the node uses, including its padding
-    .forceCharge(-50*15) // Separation between nodes on the force template
-    .size([width, height]); // Size of the chart
+      d3.json("./miserables.json").then(function (graph) {
+        let groupingForce = forceInABox()
+          .strength(0.1) // Strength to foci
+          .template(template) // Either treemap or force
+          .groupBy("group") // Node attribute to group
+          .links(graph.links) // The graph links. Must be called after setting the grouping attribute
+          .enableGrouping(useGroupInABox)
+          .nodeSize(15) // Used to compute the size of the template nodes, think of it as the radius the node uses, including its padding
+          .forceCharge(-50 * 15) // Separation between nodes on the force template
+          .size([width, height]); // Size of the chart
 
-  force
-    .nodes(graph.nodes)
-    .force("group", groupingForce)
-    .force(
-      "link",
-      d3
-        .forceLink(graph.links)
-        .distance(50)
-        .strength(groupingForce.getLinkStrength)
-    );
+        force
+          .nodes(graph.nodes)
+          .force("group", groupingForce)
+          .force(
+            "link",
+            d3
+              .forceLink(graph.links)
+              .distance(50)
+              .strength(groupingForce.getLinkStrength)
+          );
 
-  let link = svg
-    .selectAll(".link")
-    .data(graph.links)
-    .enter()
-    .append("line")
-    .attr("class", "link")
-    .style("stroke-width", function(d) {
-      return Math.sqrt(d.value);
-    });
+        let link = svg
+          .selectAll(".link")
+          .data(graph.links)
+          .enter()
+          .append("line")
+          .attr("class", "link")
+          .style("stroke-width", function (d) {
+            return Math.sqrt(d.value);
+          });
 
-  let node = svg
-    .selectAll(".node")
-    .data(graph.nodes)
-    .enter()
-    .append("circle")
-    .attr("class", "node")
-    .attr("r", 5)
-    .style("fill", function(d) {
-      return color(d.group);
-    })
-    .call(
-      d3
-        .drag()
-        .on("start", dragstarted)
-        .on("drag", dragged)
-        .on("end", dragended)
-    );
+        let node = svg
+          .selectAll(".node")
+          .data(graph.nodes)
+          .enter()
+          .append("circle")
+          .attr("class", "node")
+          .attr("r", 5)
+          .style("fill", function (d) {
+            return color(d.group);
+          })
+          .call(
+            d3
+              .drag()
+              .on("start", dragstarted)
+              .on("drag", dragged)
+              .on("end", dragended)
+          );
 
-  node.append("title").text(function(d) {
-    return d.name;
-  });
+        node.append("title").text(function (d) {
+          return d.name;
+        });
 
-  force.on("tick", function() {
-    link
-      .attr("x1", function(d) {
-        return d.source.x;
-      })
-      .attr("y1", function(d) {
-        return d.source.y;
-      })
-      .attr("x2", function(d) {
-        return d.target.x;
-      })
-      .attr("y2", function(d) {
-        return d.target.y;
+        force.on("tick", function () {
+          link
+            .attr("x1", function (d) {
+              return d.source.x;
+            })
+            .attr("y1", function (d) {
+              return d.source.y;
+            })
+            .attr("x2", function (d) {
+              return d.target.x;
+            })
+            .attr("y2", function (d) {
+              return d.target.y;
+            });
+
+          node
+            .attr("cx", function (d) {
+              return d.x;
+            })
+            .attr("cy", function (d) {
+              return d.y;
+            });
+        });
+
+        d3.select("#checkGroupInABox").on("change", function () {
+          force.stop();
+          useGroupInABox = d3.select("#checkGroupInABox").property("checked");
+          force
+            // .force("link", d3.forceLink(graph.links).distance(50).strength(
+            // function (l) { return !useGroupInABox? 0.7 :
+            //     l.source.group!==l.target.group ? 0 : 0.1;
+            // }))
+            .force("group")
+            .enableGrouping(useGroupInABox);
+
+          force.alphaTarget(0.5).restart();
+        });
+
+        d3.select("#selectTemplate").on("change", function () {
+          template = d3.select("#selectTemplate").property("value");
+          force.stop();
+          force.force("group").template(template);
+          force.alphaTarget(0.5).restart();
+        });
+
+        d3.select("#checkShowTreemap").on("change", function () {
+          drawTemplate = d3.select("#checkShowTreemap").property("checked");
+          if (drawTemplate) {
+            force.force("group").drawTemplate(svg);
+          } else {
+            force.force("group").deleteTemplate(svg);
+          }
+        });
+
+        if (drawTemplate) {
+          force.force("group").drawTemplate(svg);
+        } else {
+          force.force("group").deleteTemplate(svg);
+        }
       });
 
-    node
-      .attr("cx", function(d) {
-        return d.x;
-      })
-      .attr("cy", function(d) {
-        return d.y;
-      });
-  });
+      function dragstarted(d) {
+        if (!d3.event.active) force.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+      }
 
-  d3.select("#checkGroupInABox").on("change", function() {
-    force.stop();
-    useGroupInABox = d3.select("#checkGroupInABox").property("checked");
-    force
-      // .force("link", d3.forceLink(graph.links).distance(50).strength(
-      // function (l) { return !useGroupInABox? 0.7 :
-      //     l.source.group!==l.target.group ? 0 : 0.1;
-      // }))
-      .force("group")
-      .enableGrouping(useGroupInABox);
+      function dragged(d) {
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
+      }
 
-    force.alphaTarget(0.5).restart();
-  });
-
-  d3.select("#selectTemplate").on("change", function() {
-    template = d3.select("#selectTemplate").property("value");
-    force.stop();
-    force.force("group").template(template);
-    force.alphaTarget(0.5).restart();
-  });
-
-  d3.select("#checkShowTreemap").on("change", function() {
-    drawTemplate = d3.select("#checkShowTreemap").property("checked");
-    if (drawTemplate) {
-      force.force("group").drawTemplate(svg);
-    } else {
-      force.force("group").deleteTemplate(svg);
-    }
-  });
-
-  if (drawTemplate) {
-    force.force("group").drawTemplate(svg);
-  } else {
-    force.force("group").deleteTemplate(svg);
-  }
-});
-
-function dragstarted(d) {
-  if (!d3.event.active) force.alphaTarget(0.3).restart();
-  d.fx = d.x;
-  d.fy = d.y;
-}
-
-function dragged(d) {
-  d.fx = d3.event.x;
-  d.fy = d3.event.y;
-}
-
-function dragended(d) {
-  if (!d3.event.active) force.alphaTarget(0);
-  d.fx = null;
-  d.fy = null;
-}
-  </script>
-</body>
+      function dragended(d) {
+        if (!d3.event.active) force.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+      }
+    </script>
+  </body>
+</html>
