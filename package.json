@@ -1,6 +1,6 @@
 {
   "name": "force-in-a-box",
-  "version": "1.0.0",
+  "version": "1.0.1-0",
   "description": "forceInABox.js a d3 force for separating nodes in a d3.forceSimulation by their cluster or other attributes, using the group-in-a-box algorithm",
   "author": "John Alexis Guerra Gómez",
   "main": "src/forceInABox.js",
