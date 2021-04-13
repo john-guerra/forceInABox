@@ -1,4 +1,4 @@
-// https://github.com/john-guerra/forceInABox#readme v0.0.9 Copyright 2020 undefined
+// https://github.com/john-guerra/forceInABox#readme v0.0.10 Copyright 2021 undefined
 import { treemap, hierarchy, forceSimulation, forceX, forceY, forceCollide, forceManyBody, forceLink } from 'd3';
 
 function forceInABox() {
@@ -214,6 +214,7 @@ function forceInABox() {
     });
     return foci;
   }
+
   function initializeWithTreemap() {
     var treemap$$1 = treemap().size(force.size());
 
