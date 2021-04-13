@@ -223,6 +223,7 @@ export default function forceInABox() {
     });
     return foci;
   }
+
   function initializeWithTreemap() {
     var treemap = d3.treemap().size(force.size());
 
