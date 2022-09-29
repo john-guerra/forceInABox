@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/john-guerra/forceInABox#readme",
   "dependencies": {
-    "d3": "^6.6.2"
+    "d3": "^7.6.1"
   },
   "devDependencies": {
     "eslint": "^7.24.0",
