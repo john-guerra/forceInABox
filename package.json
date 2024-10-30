@@ -3,6 +3,7 @@
   "version": "1.0.1",
   "description": "forceInABox.js a d3 force for separating nodes in a d3.forceSimulation by their cluster or other attributes, using the group-in-a-box algorithm",
   "author": "John Alexis Guerra Gómez",
+  "type": "module",
   "main": "src/forceInABox.js",
   "module": "dist/forceInABox.esm.js",
   "browser": "dist/forceInABox.min.js",
@@ -28,16 +29,16 @@
   },
   "homepage": "https://github.com/john-guerra/forceInABox#readme",
   "dependencies": {
-    "d3": "^6.6.2"
+    "d3": "^7.9.0"
   },
   "devDependencies": {
-    "eslint": "^7.24.0",
-    "eslint-config-prettier": "^8.2.0",
-    "prettier": "^2.2.1",
-    "rollup": "^2.45.2",
-    "rollup-plugin-ascii": "0.0.3",
-    "rollup-plugin-commonjs": "^9.3.4",
-    "rollup-plugin-node-resolve": "^3.4.0",
-    "rollup-plugin-terser": "^2.0.2"
+    "@rollup/plugin-commonjs": "^28.0.1",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "eslint": "^9.13.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.3.3",
+    "rollup": "^4.24.3",
+    "rollup-plugin-ascii": "0.0.3"
   }
 }

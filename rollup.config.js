@@ -13,14 +13,15 @@
 //   }
 // };
 
-
 import ascii from "rollup-plugin-ascii";
-import node from "rollup-plugin-node-resolve";
-import commonjs from "rollup-plugin-commonjs";
-import {terser} from "rollup-plugin-terser";
-import * as meta from "./package.json";
+import node from "@rollup/plugin-node-resolve";
+import commonjs from "@rollup/plugin-commonjs";
+import terser from "@rollup/plugin-terser";
+import meta from "./package.json" assert { type: "json" };
 
-const copyright = `// ${meta.homepage} v${meta.version} Copyright ${(new Date).getFullYear()} ${meta.author.name}`;
+const copyright = `// ${meta.homepage} v${
+  meta.version
+} Copyright ${new Date().getFullYear()} ${meta.author.name}`;
 
 export default [
   {
@@ -29,13 +30,11 @@ export default [
       node({
         jsxnext: true,
         main: true,
-        browser: true
+        browser: true,
       }),
-      ascii()
+      ascii(),
     ],
-    external: [
-      "d3"
-    ],
+    external: ["d3"],
     output: {
       extend: true,
       banner: copyright,
@@ -44,23 +43,21 @@ export default [
       indent: false,
       name: "forceInABox",
       globals: {
-        d3:"d3",
-        "d3-scale-chromatic":"d3ScaleChromatic"
-      }
-    }
+        d3: "d3",
+        "d3-scale-chromatic": "d3ScaleChromatic",
+      },
+    },
   },
   {
     input: "src/forceInABox.js",
     plugins: [
       node({
-        jsxnext: true
+        jsxnext: true,
       }),
       ascii(),
-      commonjs()
+      commonjs(),
     ],
-    external: [
-      "d3"
-    ],
+    external: ["d3"],
     output: {
       extend: true,
       banner: copyright,
@@ -69,10 +66,10 @@ export default [
       indent: false,
       name: "forceInABox",
       globals: {
-        d3:"d3",
-        "d3-scale-chromatic":"d3ScaleChromatic"
-      }
-    }
+        d3: "d3",
+        "d3-scale-chromatic": "d3ScaleChromatic",
+      },
+    },
   },
   {
     input: "src/forceInABox",
@@ -80,14 +77,12 @@ export default [
       node({
         jsxnext: true,
         main: true,
-        browser: true
+        browser: true,
       }),
       ascii(),
-      terser({output: {preamble: copyright}})
+      terser({ output: { preamble: copyright } }),
     ],
-    external: ["d3",
-      "d3-scale-chromatic"
-    ],
+    external: ["d3", "d3-scale-chromatic"],
     output: {
       extend: true,
       file: "dist/forceInABox.min.js",
@@ -95,9 +90,9 @@ export default [
       indent: false,
       name: "forceInABox",
       globals: {
-        d3:"d3",
-        "d3-scale-chromatic":"d3ScaleChromatic"
-      }
-    }
-  }
+        d3: "d3",
+        "d3-scale-chromatic": "d3ScaleChromatic",
+      },
+    },
+  },
 ];
